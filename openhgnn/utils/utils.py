@@ -13,30 +13,13 @@ def get_nodes_dict(hg):
         n_dict[n] = hg.num_nodes(n)
     return n_dict
 
+def extract_embed(node_embed, input_nodes):
+    emb = {}
 
-def get_idx(hg, category):
-    train_mask = hg.nodes[category].data.pop('train_mask')
-    test_mask = hg.nodes[category].data.pop('test_mask')
-    train_idx = th.nonzero(train_mask, as_tuple=False).squeeze()
-    test_idx = th.nonzero(test_mask, as_tuple=False).squeeze()
-
-    if 'labels' in hg.nodes[category].data:
-        labels = hg.nodes[category].data.pop('labels')
-    elif 'label' in hg.nodes[category].data:
-        labels = hg.nodes[category].data.pop('label').to('cpu')
-    else:
-        raise ValueError('label in not in the hg.nodes[category].data')
-    # # get target category id
-    # node_ids = th.arange(g.number_of_nodes())
-    # category_id = len(hg.ntypes)
-    # for i, ntype in enumerate(hg.ntypes):
-    #     if ntype == category:
-    #         category_id = i
-    # # find out the target node ids in g
-    # node_tids = g.ndata[dgl.NTYPE]
-    # loc = (node_tids == category_id)
-    # target_idx = node_ids[loc]
-    return train_idx, test_idx, labels
+    for ntype, nid in input_nodes.items():
+        nid = input_nodes[ntype]
+        emb[ntype] = node_embed[ntype][nid]
+    return emb
 
 
 def build_dataset(model_name, dataset_name):

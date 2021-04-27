@@ -70,13 +70,15 @@ class Config(object):
             self.num_edge_layer = conf.getint("RSHN", "num_edge_layer")
             self.patience = conf.getint("RSHN", "patience")
             self.validation = conf.getboolean("RSHN", "validation")
-            self.minibatch_flag = conf.getboolean("RSHN", "minibatch_flag")
+            self.mini_batch_flag = conf.getboolean("RSHN", "mini_batch_flag")
             self.task = 'entity_classification'
         elif model == 'RGCN':
             self.lr = conf.getfloat("RGCN", "learning_rate")
             self.dropout = conf.getfloat("RGCN", "dropout")
 
-            self.n_hidden = conf.getint("RGCN", "n_hidden")
+            self.hidden_dim = conf.getint("RGCN", "hidden_dim")
+            self.out_dim = conf.getint("RGCN", "out_dim")
+
             self.n_bases = conf.getint("RGCN", "n_bases")
             self.n_layers = conf.getint("RGCN", "n_layers")
             self.max_epoch = conf.getint("RGCN", "max_epoch")
@@ -86,16 +88,17 @@ class Config(object):
             self.patience = conf.getint("RGCN", "patience")
             self.batch_size = conf.getint("RGCN", "batch_size")
             self.validation = conf.getboolean("RGCN", "validation")
-            self.minibatch_flag = conf.getboolean("RGCN", "minibatch_flag")
+            self.mini_batch_flag = conf.getboolean("RGCN", "mini_batch_flag")
             self.use_self_loop = conf.getboolean("RGCN", "use_self_loop")
-            self.task = 'entity_classification'
+
         elif model == 'CompGCN':
             self.lr = conf.getfloat("CompGCN", "learning_rate")
 
             self.weight_decay = conf.getfloat("CompGCN", "weight_decay")
             self.dropout = conf.getfloat("CompGCN", "dropout")
 
-            self.n_hidden = conf.getint("CompGCN", "n_hidden")
+            self.h_dim = conf.getint("CompGCN", "h_dim")
+            self.out_dim = conf.getint("CompGCN", "out_dim")
             self.n_layers = conf.getint("CompGCN", "n_layers")
             self.max_epoch = conf.getint("CompGCN", "max_epoch")
             self.seed = conf.getint("CompGCN", "seed")
@@ -103,7 +106,7 @@ class Config(object):
 
             self.comp_fn = conf.get("CompGCN", "comp_fn")
             self.task = 'entity_classification'
-            self.minibatch_flag = conf.getboolean("CompGCN", "minibatch_flag")
+            self.mini_batch_flag = conf.getboolean("CompGCN", "mini_batch_flag")
             self.validation = conf.getboolean("CompGCN", "validation")
             pass
         elif model == 'HetGNN':
@@ -122,7 +125,7 @@ class Config(object):
             self.rw_length = conf.getint("HetGNN", "rw_length")
             self.rw_walks = conf.getint("HetGNN", "rw_walks")
             self.rwr_prob = conf.getfloat("HetGNN", "rwr_prob")
-            self.minibatch_flag = conf.getboolean("HetGNN", "minibatch_flag")
+            self.mini_batch_flag = conf.getboolean("HetGNN", "mini_batch_flag")
             self.task = 'unsupervised_train'
 
             pass

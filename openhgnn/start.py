@@ -4,7 +4,7 @@ from openhgnn.utils import set_random_seed
 from openhgnn.utils.dgl_graph import load_HIN, load_KG, load_link_pred
 import torch.nn.functional as F
 import torch as th
-from openhgnn.tasks import build_task
+from openhgnn.trainerflow import build_flow
 
 
 def OpenHGNN(args):
@@ -13,12 +13,24 @@ def OpenHGNN(args):
     # TODO find the best parameter
     # if getattr(args, "use_best_config", False):
     #     args = set_best_config(args)
-
+    if hasattr(args, 'trainerflow'):
+        trainerflow = args.trainerflow
+    else:
+        trainerflow = get_trainerflow(args.model, args.task)
     print(args)
-    task = build_task(args)
-    result = task.train()
+    flow = build_flow(args, trainerflow)
+    result = flow.train()
 
     return result
+
+def get_trainerflow(model, task):
+    if model in ['RGCN', 'CompGCN']:
+        if task in ['node_classification']:
+            return 'semi_supervised_node_classification'
+        if task in ['link_prediction']:
+            return 'distmult'
+    elif model in ['HetGNN']:
+        return 'skipgram'
 
 
 def train(config):

@@ -11,11 +11,11 @@ from . import BaseModel, register_model
 
 
 @register_model('RGCN')
-class EntityClassify(BaseModel):
+class RGCN(BaseModel):
 
     @classmethod
     def build_model_from_args(cls, args, hg):
-        return cls(hg, args.n_hidden, args.num_classes, args.n_bases, args.n_layers -2 , dropout=args.dropout
+        return cls(hg, args.hidden_dim, args.out_dim, args.n_bases, args.n_layers -2, dropout=args.dropout
         )
 
     def __init__(self,
@@ -25,7 +25,7 @@ class EntityClassify(BaseModel):
                  num_hidden_layers=1,
                  dropout=0,
                  use_self_loop=False):
-        super(EntityClassify, self).__init__()
+        super(RGCN, self).__init__()
         self.g = g
         self.h_dim = h_dim
         self.out_dim = out_dim
@@ -154,6 +154,7 @@ class RelGraphConvLayer(nn.Module):
         self.bias = bias
         self.activation = activation
         self.self_loop = self_loop
+        self.batchnorm = False
 
         self.conv = dglnn.HeteroGraphConv({
                 rel : dglnn.GraphConv(in_feat, out_feat, norm='right', weight=False, bias=False)
@@ -179,6 +180,9 @@ class RelGraphConvLayer(nn.Module):
             self.loop_weight = nn.Parameter(th.Tensor(in_feat, out_feat))
             nn.init.xavier_uniform_(self.loop_weight,
                                     gain=nn.init.calculate_gain('relu'))
+        # define batch norm layer
+        if self.batchnorm:
+            self.bn = nn.BatchNorm1d(out_feat)
 
         self.dropout = nn.Dropout(dropout)
 
@@ -218,8 +222,10 @@ class RelGraphConvLayer(nn.Module):
                 h = h + self.h_bias
             if self.activation:
                 h = self.activation(h)
+            if self.batchnorm:
+                h = self.bn(h)
             return self.dropout(h)
-        return {ntype : _apply(ntype, h) for ntype, h in hs.items()}
+        return {ntype: _apply(ntype, h) for ntype, h in hs.items()}
 
 class RelGraphEmbed(nn.Module):
     r"""Embedding layer for featureless heterograph."""

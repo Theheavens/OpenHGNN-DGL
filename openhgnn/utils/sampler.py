@@ -153,7 +153,7 @@ def assign_simple_node_features(ndata, g, ntypes, assign_id=False):
             if not assign_id and col == dgl.NID:
                 continue
             induced_nodes = ndata[dgl.NID][ntype]
-            ndata[col] = {ntype : g.nodes[ntype].data[col][induced_nodes]}
+            ndata[col] = {ntype: g.nodes[ntype].data[col][induced_nodes]}
 
 
 def assign_features_to_blocks(blocks, g, ntypes):

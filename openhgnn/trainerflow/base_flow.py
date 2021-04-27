@@ -14,12 +14,15 @@ import torch
 #         return obj
 
 
-class BaseTask(ABC):
+class BaseFlow(ABC):
+    @staticmethod
+    def add_args(parser: argparse.ArgumentParser):
+        """Add tasks-specific arguments to the parser."""
+        pass
 
     def __init__(self, args):
-        super(BaseTask, self).__init__()
+        super(BaseFlow, self).__init__()
         os.makedirs("./checkpoints", exist_ok=True)
-        self.loss_fn = None
         self.evaluator = None
 
         self.load_from_checkpoint = hasattr(args, "checkpoint") and args.checkpoint
@@ -28,6 +31,10 @@ class BaseTask(ABC):
             atexit.register(self.save_checkpoint)
         else:
             self._checkpoint = None
+
+    @abstractmethod
+    def train(self):
+        pass
 
     def load_from_pretrained(self):
         if self.load_from_checkpoint:

@@ -29,7 +29,7 @@ class CompGCN(BaseModel):
     """
     @classmethod
     def build_model_from_args(cls, args, hg):
-        return cls(args.n_hidden, args.n_hidden, args.num_classes, get_nodes_dict(hg), len(hg.etypes),
+        return cls(args.h_dim, args.h_dim, args.out_dim, get_nodes_dict(hg), len(hg.etypes),
             args.n_layers, comp_fn=args.comp_fn, dropout=args.dropout
         )
 
